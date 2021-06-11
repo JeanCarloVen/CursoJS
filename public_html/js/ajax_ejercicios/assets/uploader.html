@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html lang="es">
+    <head>
+        <title>Uploader con AJAX</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            html{
+                box-sizing: border-box;
+                font-family: sans-serif;
+                font-size: 16px;
+            }
+            
+           *,
+           *:before,
+           *:after{
+               box-sizing: inherit;
+           }
+           
+           main{
+               display: flex;
+               flex-direction: column;
+               justify-content: center;
+               align-items: center;
+               text-align: center;
+               min-height: 100vh;
+           }
+        </style>
+    </head>
+    <body>
+        <main>
+            <input type="file" id="files" name="files" multiple>
+        </main>
+        <script>
+            const d = document,
+            $main = d.querySelector("main"),
+            $files = d.getElementById("files");
+            
+            const uploader = (file) => {
+                //programación AJAX
+                //console.log(file);
+                const xhr = new XMLHttpRequest(), 
+                    formData = new FormData();
+
+                formData.append("file", file); //Al formData se le agrega la variable "file" que viene siendo el nombre del input
+                
+                xhr.addEventListener("readystatechange", e => {
+                    console.log(e);
+                    console.log(xhr.status);
+                    if(xhr.readyState !== 4)return;
+                    if(xhr.status >= 200 && xhr.status < 300){
+                         console.log(xhr.responseText);
+                    }else{
+                        let message = xhr.statusText || "Ocurrió un error";
+                        console.error(`Error ${xhr.status} : ${message}`);
+                    }
+                });
+                
+                xhr.open("POST", ".assets/uploader_1.php");
+                xhr.setRequestHeader("enc-type", "multipart/form-data");
+                xhr.send(formData);
+                    
+            };
+            
+            d.addEventListener("change", e =>{
+                if(e.target === $files){
+
+                   const files = Array.from(e.target.files);
+                   console.log(files);
+                   files.forEach(el => uploader(el));
+                }
+            });
+        </script>
+    </body>
+</html>
